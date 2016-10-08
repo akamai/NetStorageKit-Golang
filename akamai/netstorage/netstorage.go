@@ -13,7 +13,6 @@ import (
     "net/url"
     "os"
     "path"
-    "strconv"
     "strings"
     "time"
 )
@@ -26,7 +25,7 @@ type Netstorage struct {
     ssl         string
 }
 
-func New(hostname, keyname, key string, ssl bool) *Netstorage {
+func NewNetstorage(hostname, keyname, key string, ssl bool) *Netstorage {
     s := ""
     if ssl {
         s = "s"
@@ -36,11 +35,11 @@ func New(hostname, keyname, key string, ssl bool) *Netstorage {
 
 func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, error) {
     ns_path := kwargs["path"]
-    if (!strings.HasPrefix(ns_path, "/")) {
-        // Exception    
+    if u, err := url.Parse(ns_path); strings.HasPrefix(ns_path, "/") && err != nil {
+        ns_path = u.RequestURI()
+    } else {
+        // Exception
     }
-    
-    ns_path = strconv.Quote(ns_path)
 
     acs_action := fmt.Sprintf("version=1&action=%s", kwargs["action"])
     acs_auth_data := fmt.Sprintf("5, 0.0.0.0, 0.0.0.0, %d, %d, %s",
@@ -55,7 +54,7 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, error)
 
     var data io.Reader = nil
     if kwargs["action"] == "upload" {
-        bArr, err := ioutil.ReadFile(kwargs["soruce"])
+        bArr, err := ioutil.ReadFile(kwargs["source"])
         if err != nil {
             return nil, err    
         }
@@ -86,12 +85,13 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, error)
     defer response.Body.Close()
 
     if kwargs["action"] == "download" {
-        body, err := ioutil.ReadAll(response.Body)
+        out, err := os.Create(kwargs["destination"])
         if err != nil {
             return nil, err
         }
-        err = ioutil.WriteFile(kwargs["destination"], body, 0666)
-        if err != nil {
+        defer out.Close()
+
+        if _, err := io.Copy(out, response.Body); err != nil {
             return nil, err
         }
     }
@@ -99,7 +99,7 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, error)
     return response, nil
 }
 
-func (ns *Netstorage) dir(ns_path string) (*http.Response, error) {
+func (ns *Netstorage) Dir(ns_path string) (*http.Response, error) {
     return ns._request(map[string]string{
         "action": "dir&format=xml",
         "method": "GET",
@@ -107,7 +107,7 @@ func (ns *Netstorage) dir(ns_path string) (*http.Response, error) {
     })
 }
 
-func (ns *Netstorage) download(ns_source, local_destination string) (*http.Response, error) {
+func (ns *Netstorage) Download(ns_source, local_destination string) (*http.Response, error) {
     return ns._request(map[string]string{
         "action": "download",
         "method": "GET",
@@ -116,7 +116,7 @@ func (ns *Netstorage) download(ns_source, local_destination string) (*http.Respo
     })
 }
 
-func (ns *Netstorage) du(ns_path string) (*http.Response, error) {
+func (ns *Netstorage) Du(ns_path string) (*http.Response, error) {
     return ns._request(map[string]string{
         "action": "du&format=xml",
         "method": "GET",
@@ -124,7 +124,7 @@ func (ns *Netstorage) du(ns_path string) (*http.Response, error) {
     })
 }
 
-func (ns *Netstorage) stat(ns_path string) (*http.Response, error) {
+func (ns *Netstorage) Stat(ns_path string) (*http.Response, error) {
     return ns._request(map[string]string{
         "action": "stat&format=xml",
         "method": "GET",
@@ -132,7 +132,7 @@ func (ns *Netstorage) stat(ns_path string) (*http.Response, error) {
     })
 }
 
-func (ns *Netstorage) mkdir(ns_path string) (*http.Response, error) {
+func (ns *Netstorage) Mkdir(ns_path string) (*http.Response, error) {
     return ns._request(map[string]string{
         "action": "mkdir",
         "method": "POST",
@@ -140,7 +140,7 @@ func (ns *Netstorage) mkdir(ns_path string) (*http.Response, error) {
     })
 }
 
-func (ns *Netstorage) rmdir(ns_path string) (*http.Response, error) {
+func (ns *Netstorage) Rmdir(ns_path string) (*http.Response, error) {
     return ns._request(map[string]string{
         "action": "rmdir",
         "method": "POST",
@@ -148,7 +148,7 @@ func (ns *Netstorage) rmdir(ns_path string) (*http.Response, error) {
     })
 }
 
-func (ns *Netstorage) mtime(ns_path string, mtime int64) (*http.Response, error) {
+func (ns *Netstorage) Mtime(ns_path string, mtime int64) (*http.Response, error) {
     return ns._request(map[string]string{
         "action": fmt.Sprintf("mtime&format=xml&mtime=%d", mtime),
         "method": "POST",
@@ -156,7 +156,7 @@ func (ns *Netstorage) mtime(ns_path string, mtime int64) (*http.Response, error)
     })
 }
 
-func (ns *Netstorage) delete(ns_path string) (*http.Response, error) {
+func (ns *Netstorage) Delete(ns_path string) (*http.Response, error) {
     return ns._request(map[string]string{
         "action": "delete",
         "method": "POST",
@@ -164,7 +164,7 @@ func (ns *Netstorage) delete(ns_path string) (*http.Response, error) {
     })
 }
 
-func (ns *Netstorage) quick_delete(ns_path string) (*http.Response, error) {
+func (ns *Netstorage) Quick_delete(ns_path string) (*http.Response, error) {
     return ns._request(map[string]string{
         "action": "quick-delete&quick-delete=imreallyreallysure",
         "method": "POST",
@@ -172,7 +172,7 @@ func (ns *Netstorage) quick_delete(ns_path string) (*http.Response, error) {
     })
 }
 
-func (ns *Netstorage) rename(ns_target, ns_destination string) (*http.Response, error) {
+func (ns *Netstorage) Rename(ns_target, ns_destination string) (*http.Response, error) {
     return ns._request(map[string]string{
         "action": "rename&destination=" + url.QueryEscape(ns_destination),
         "method": "POST",
@@ -180,7 +180,7 @@ func (ns *Netstorage) rename(ns_target, ns_destination string) (*http.Response, 
     })
 }
 
-func (ns *Netstorage) symlink(ns_target, ns_destination string) (*http.Response, error) {
+func (ns *Netstorage) Symlink(ns_target, ns_destination string) (*http.Response, error) {
     return ns._request(map[string]string{
         "action": "symlink&target=" + url.QueryEscape(ns_target),
         "method": "POST",
@@ -188,7 +188,7 @@ func (ns *Netstorage) symlink(ns_target, ns_destination string) (*http.Response,
     })
 }
 
-func (ns *Netstorage) upload(local_source, ns_destination string) (*http.Response, error) {
+func (ns *Netstorage) Upload(local_source, ns_destination string) (*http.Response, error) {
     s, err := os.Stat(local_source)
 
     if err != nil {

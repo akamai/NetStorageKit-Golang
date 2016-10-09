@@ -35,7 +35,7 @@ func NewNetstorage(hostname, keyname, key string, ssl bool) *Netstorage {
 
 func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, error) {
     ns_path := kwargs["path"]
-    if u, err := url.Parse(ns_path); strings.HasPrefix(ns_path, "/") && err != nil {
+    if u, err := url.Parse(ns_path); strings.HasPrefix(ns_path, "/") && err == nil {
         ns_path = u.RequestURI()
     } else {
         // Exception
@@ -85,7 +85,17 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, error)
     defer response.Body.Close()
 
     if kwargs["action"] == "download" {
-        out, err := os.Create(kwargs["destination"])
+        local_destination := kwargs["destination"]
+
+        if strings.HasSuffix(kwargs["path"], "/") {
+            // error
+        } else if local_destination == "" {
+            local_destination = path.Base(kwargs["path"]) 
+        } else if s, err := os.Stat(local_destination); err == nil && s.IsDir() {
+            local_destination = path.Join(local_destination, path.Base(kwargs["path"]))
+        }
+
+        out, err := os.Create(local_destination)
         if err != nil {
             return nil, err
         }
@@ -107,7 +117,12 @@ func (ns *Netstorage) Dir(ns_path string) (*http.Response, error) {
     })
 }
 
-func (ns *Netstorage) Download(ns_source, local_destination string) (*http.Response, error) {
+func (ns *Netstorage) Download(path ...string) (*http.Response, error) {
+    ns_source := path[0]
+    local_destination := ""
+    if len(path) >= 2 {
+        local_destination = path[1]
+    }
     return ns._request(map[string]string{
         "action": "download",
         "method": "GET",

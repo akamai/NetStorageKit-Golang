@@ -59,32 +59,33 @@ func (suite *NetstorageTestSuite) TearDownSuite() {
     }
 
     // delete temp files for netstorage
-    if res, err := suite.ns.Delete(suite.temp_ns_file); res.StatusCode == 200 && err == nil {
+    if res, _, err := suite.ns.Delete(suite.temp_ns_file); res.StatusCode == 200 && err == nil {
         fmt.Printf("[TEARDOWN] delete %d done\n", suite.temp_ns_file)
     }
 
-    if res, err := suite.ns.Delete(suite.temp_ns_file + "_lnk"); res.StatusCode == 200 && err == nil {
+    if res, _, err := suite.ns.Delete(suite.temp_ns_file + "_lnk"); res.StatusCode == 200 && err == nil {
         fmt.Printf("[TEARDOWN] delete %d done\n", suite.temp_ns_file + "_lnk")
     }
 
-    if res, err := suite.ns.Delete(suite.temp_ns_file + "_rename"); res.StatusCode == 200 && err == nil {
+    if res, _, err := suite.ns.Delete(suite.temp_ns_file + "_rename"); res.StatusCode == 200 && err == nil {
         fmt.Printf("[TEARDOWN] delete %d done\n", suite.temp_ns_file + "_rename")
     }
 
-    if res, err := suite.ns.Rmdir(suite.temp_ns_dir); res.StatusCode == 200 && err == nil {
+    if res, _, err := suite.ns.Rmdir(suite.temp_ns_dir); res.StatusCode == 200 && err == nil {
         fmt.Printf("[TEARDOWN] rmdir %d done\n", suite.temp_ns_dir)
     }
 }
 
 func (suite *NetstorageTestSuite) TestNetstorage() {
     // Dir
-    res, err := suite.ns.Dir("/" + NS_CPCODE)
+    res, _, err := suite.ns.Dir("/" + NS_CPCODE)
     check(err, true)
     suite.Equal(res.StatusCode, 200, "[dir] StatusCode should be 200 OK")
     fmt.Printf("[TEST] dir /%s done\n", NS_CPCODE)
     
+    
     // Mkdir
-    res, err = suite.ns.Mkdir(suite.temp_ns_dir)
+    res, _, err = suite.ns.Mkdir(suite.temp_ns_dir)
     check(err, true)
     suite.Equal(res.StatusCode, 200, "[mkdir] StatusCode should be 200 OK")
     fmt.Printf("[TEST] mkdir %s done\n", suite.temp_ns_dir)
@@ -92,60 +93,60 @@ func (suite *NetstorageTestSuite) TestNetstorage() {
     // Upload
     err = ioutil.WriteFile(suite.temp_file, []byte("Hello, Netstorage API World!"), 0666)
     check(err, true)
-    res, err = suite.ns.Upload(suite.temp_file, suite.temp_ns_file)
+    res, _, err = suite.ns.Upload(suite.temp_file, suite.temp_ns_file)
     check(err, true)
     suite.Equal(res.StatusCode, 200, "[upload] StatusCode should be 200 OK")
     fmt.Printf("[TEST] upload %s to %s done\n", suite.temp_file, suite.temp_ns_file)
 
     // Du
-    res, err = suite.ns.Du(suite.temp_ns_dir)
+    res, _, err = suite.ns.Du(suite.temp_ns_dir)
     check(err, true)
     suite.Equal(res.StatusCode, 200, "[du] StatusCode should be 200 OK")
     fmt.Printf("[TEST] du %s done\n", suite.temp_ns_dir)
 
     // Mtime
     current_time := time.Now().Unix()
-    res, err = suite.ns.Mtime(suite.temp_ns_file, current_time)
+    res, _, err = suite.ns.Mtime(suite.temp_ns_file, current_time)
     check(err, true)
     suite.Equal(res.StatusCode, 200, "[mtime] StatusCode should be 200 OK")
     fmt.Printf("[TEST] mtime %s done\n", suite.temp_ns_file)
 
     // Stat
-    res, err = suite.ns.Stat(suite.temp_ns_file)
+    res, _, err = suite.ns.Stat(suite.temp_ns_file)
     check(err, true)
     suite.Equal(res.StatusCode, 200, "[stat] StatusCode should be 200 OK")
     fmt.Printf("[TEST] stat %s done\n", suite.temp_ns_file)
 
     // Symlink
-    res, err = suite.ns.Symlink(suite.temp_ns_file, suite.temp_ns_file + "_lnk")
+    res, _, err = suite.ns.Symlink(suite.temp_ns_file, suite.temp_ns_file + "_lnk")
     check(err, true)
     suite.Equal(res.StatusCode, 200, "[symlink] StatusCode should be 200 OK")
     fmt.Printf("[TEST] symlink %s to %s done\n", suite.temp_ns_file, suite.temp_ns_file + "_lnk")
 
     // Rename
-    res, err = suite.ns.Rename(suite.temp_ns_file, suite.temp_ns_file + "_rename")
+    res, _, err = suite.ns.Rename(suite.temp_ns_file, suite.temp_ns_file + "_rename")
     check(err, true)
     suite.Equal(res.StatusCode, 200, "[rename] StatusCode should be 200 OK")
     fmt.Printf("[TEST] rename %s to %s done\n", suite.temp_ns_file, suite.temp_ns_file + "_rename")
 
     // Download
-    res, err = suite.ns.Download(suite.temp_ns_file + "_rename")
+    res, _, err = suite.ns.Download(suite.temp_ns_file + "_rename")
     check(err, true)
     suite.Equal(res.StatusCode, 200, "[download] StatusCode should be 200 OK")
     fmt.Printf("[TEST] download %s done\n", suite.temp_ns_file)
 
     // Delete
-    res, err = suite.ns.Delete(suite.temp_ns_file + "_rename")
+    res, _, err = suite.ns.Delete(suite.temp_ns_file + "_rename")
     check(err, true)
     suite.Equal(res.StatusCode, 200, "[delete] StatusCode should be 200 OK")
     fmt.Printf("[TEST] delete %s done\n", suite.temp_ns_file + "_rename")
-    res, err = suite.ns.Delete(suite.temp_ns_file + "_lnk")
+    res, _, err = suite.ns.Delete(suite.temp_ns_file + "_lnk")
     check(err, true)
     suite.Equal(res.StatusCode, 200, "[delete] StatusCode should be 200 OK")
     fmt.Printf("[TEST] delete %s done\n", suite.temp_ns_file + "_lnk")
 
     // Rmdir
-    res, err = suite.ns.Rmdir(suite.temp_ns_dir)
+    res, _, err = suite.ns.Rmdir(suite.temp_ns_dir)
     check(err, true)
     suite.Equal(res.StatusCode, 200, "[rmdir] StatusCode should be 200 OK")
     fmt.Printf("[TEST] rmdir %s done\n", suite.temp_ns_dir)

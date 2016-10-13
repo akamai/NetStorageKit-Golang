@@ -7,10 +7,10 @@ import (
     "os"
     "testing"
     "time"
-    "./akamai/netstorage"
-    "./spike/secrets"
-
+    "github.com/AstinCHOI/NetStorageKit-GoLang/akamai/netstorage"
     "github.com/stretchr/testify/suite"
+    "./spike/secrets"
+    // "./akamai/netstorage"
 )
 
 var NS_HOSTNAME string = "astin-nsu.akamaihd.net"
@@ -60,19 +60,19 @@ func (suite *NetstorageTestSuite) TearDownSuite() {
 
     // delete temp files for netstorage
     if res, _, err := suite.ns.Delete(suite.temp_ns_file); res.StatusCode == 200 && err == nil {
-        fmt.Printf("[TEARDOWN] delete %d done\n", suite.temp_ns_file)
+        fmt.Printf("[TEARDOWN] delete %s done\n", suite.temp_ns_file)
     }
 
     if res, _, err := suite.ns.Delete(suite.temp_ns_file + "_lnk"); res.StatusCode == 200 && err == nil {
-        fmt.Printf("[TEARDOWN] delete %d done\n", suite.temp_ns_file + "_lnk")
+        fmt.Printf("[TEARDOWN] delete %s done\n", suite.temp_ns_file + "_lnk")
     }
 
     if res, _, err := suite.ns.Delete(suite.temp_ns_file + "_rename"); res.StatusCode == 200 && err == nil {
-        fmt.Printf("[TEARDOWN] delete %d done\n", suite.temp_ns_file + "_rename")
+        fmt.Printf("[TEARDOWN] delete %s done\n", suite.temp_ns_file + "_rename")
     }
 
     if res, _, err := suite.ns.Rmdir(suite.temp_ns_dir); res.StatusCode == 200 && err == nil {
-        fmt.Printf("[TEARDOWN] rmdir %d done\n", suite.temp_ns_dir)
+        fmt.Printf("[TEARDOWN] rmdir %s done\n", suite.temp_ns_dir)
     }
 }
 

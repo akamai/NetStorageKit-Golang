@@ -17,7 +17,7 @@ $ go get github.com/AstinCHOI/NetStorageKit-GoLang/akamai/netstorage
 Example
 -------
 
-```GoLang
+```go
 package main
 
 import (
@@ -52,7 +52,7 @@ func main() {
 Methods
 -------
 
-```GoLang
+```go
 ns.Delete(NETSTORAGE_PATH)
 ns.Dir(NETSTORAGE_PATH)
 ns.Download(NETSTORAGE_SOURCE, LOCAL_DESTINATION)
@@ -73,7 +73,7 @@ ns.Upload(LOCAL_SOURCE, NETSTORAGE_DESTINATION)
   
 Test
 ----
-You can test all above methods with [Unit Test Script](https://github.com/AstinCHOI/NetStorageKit-Golang/blob/master/netstorage_test.go). It uses [Testify](https://github.com/stretchr/testify) for the test:
+You can test all above methods with [unittest script](https://github.com/AstinCHOI/NetStorageKit-Golang/blob/master/netstorage_test.go). It uses [Testify](https://github.com/stretchr/testify) for the test:
 
 
 ```bash

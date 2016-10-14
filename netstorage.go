@@ -1,3 +1,4 @@
+// package netstorage provides interfacing the Akamai Netstorage(File/Object Store) API http(s) call 
 package netstorage
 
 import (
@@ -17,15 +18,19 @@ import (
     "time"
 )
 
-//
+// Hostname format should be "-nsu.akamaihd.net" and
+// Hostname, Keyname and Key information is the Akamai Netstorage account page.
+// Note that don't expose Key on public repository.
+// Ssl is decided by "NetNetstorage" function - string "s" means https and "" does http
 type Netstorage struct {
-    hostname    string
-    keyname     string
-    key         string
-    ssl         string
+    Hostname    string
+    Keyname     string
+    Key         string
+    Ssl         string
 }
 
-//
+// Create and initiate Netstorage struct.
+// ssl argument decides https(true) and http(false) which means "s" and "" 
 func NewNetstorage(hostname, keyname, key string, ssl bool) *Netstorage {
     if (hostname == "" && keyname == "" && key == "") {
         panic("[NetstorageError] You should input netstorage hostname, keyname and key all")
@@ -37,9 +42,9 @@ func NewNetstorage(hostname, keyname, key string, ssl bool) *Netstorage {
     return &Netstorage{hostname, keyname, key, s}
 }
 
-//
+// Only for upload action
 func _ifUploadAction(kwargs map[string]string) (*io.Reader, error) {
-    var data io.Reader = nil
+    var data io.Reader
     if kwargs["action"] == "upload" {
         bArr, err := ioutil.ReadFile(kwargs["source"])
         if err != nil {
@@ -51,7 +56,7 @@ func _ifUploadAction(kwargs map[string]string) (*io.Reader, error) {
     return &data, nil
 }
 
-//
+// Reads http body from response, close response.Body and returns that string 
 func _getBody(kwargs map[string]string, response *http.Response) (string, error) {
     var body []byte
     var err error
@@ -99,10 +104,10 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, string
     acsAuthData := fmt.Sprintf("5, 0.0.0.0, 0.0.0.0, %d, %d, %s",
                                     time.Now().Unix(),
                                     rand.Intn(100000),
-                                    ns.keyname)
+                                    ns.Keyname)
 
     signString := fmt.Sprintf("%s\nx-akamai-acs-action:%s\n", nsPath, acsAction)
-    mac := hmac.New(sha256.New, []byte(ns.key))
+    mac := hmac.New(sha256.New, []byte(ns.Key))
     mac.Write([]byte(acsAuthData + signString))
     acsAuthSign := base64.StdEncoding.EncodeToString(mac.Sum(nil))
 
@@ -112,7 +117,7 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, string
     }
 
     request, err := http.NewRequest(kwargs["method"], 
-        fmt.Sprintf("http%s://%s%s", ns.ssl, ns.hostname, nsPath), *data)
+        fmt.Sprintf("http%s://%s%s", ns.Ssl, ns.Hostname, nsPath), *data)
     
     if err != nil {
 		return nil, "", err
@@ -137,7 +142,7 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, string
     return response, body, err
 }
 
-//
+// 
 func (ns *Netstorage) Dir(nsPath string) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": "dir&format=xml",
@@ -148,9 +153,9 @@ func (ns *Netstorage) Dir(nsPath string) (*http.Response, string, error) {
 
 //
 func (ns *Netstorage) Download(path ...string) (*http.Response, string, error) {
-    ns_source := path[0]
-    if strings.HasSuffix(ns_source, "/") {
-        return nil, "", fmt.Errorf("[NetstorageError] Nestorage download path shouldn't be a directory: %s", ns_source)
+    nsSource := path[0]
+    if strings.HasSuffix(nsSource, "/") {
+        return nil, "", fmt.Errorf("[NetstorageError] Nestorage download path shouldn't be a directory: %s", nsSource)
     }
 
     localDestination := ""
@@ -161,7 +166,7 @@ func (ns *Netstorage) Download(path ...string) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": "download",
         "method": "GET",
-        "path": ns_source,
+        "path": nsSource,
         "destination": localDestination,
     })
 }

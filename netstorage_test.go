@@ -1,4 +1,5 @@
-package netstorage_test
+//
+package netstorage
 
 
 import (
@@ -7,10 +8,10 @@ import (
     "os"
     "testing"
     "time"
-    "github.com/AstinCHOI/NetStorageKit-GoLang/akamai/netstorage"
-    "github.com/stretchr/testify/suite"
+    
     "./spike/secrets"
-    // "./akamai/netstorage"
+    // "github.com/AstinCHOI/netstoragekit-golang"
+    "github.com/stretchr/testify/suite"
 )
 
 var NS_HOSTNAME string = "astin-nsu.akamaihd.net"
@@ -21,7 +22,7 @@ var NS_CPCODE string = "360949"
 
 type NetstorageTestSuite struct {
     suite.Suite
-    ns *netstorage.Netstorage
+    ns *Netstorage
     temp_ns_dir string
     temp_file string
     temp_ns_file string
@@ -38,7 +39,7 @@ func check(err error, exit bool) {
 }
 
 func (suite *NetstorageTestSuite) SetupSuite() {
-    suite.ns = netstorage.NewNetstorage(NS_HOSTNAME, NS_KEYNAME, NS_KEY, false)
+    suite.ns = NewNetstorage(NS_HOSTNAME, NS_KEYNAME, NS_KEY, false)
     suite.temp_ns_dir = fmt.Sprintf("/%s/nst_%d", NS_CPCODE, time.Now().Unix())
     suite.temp_file = fmt.Sprintf("nst_%d.txt", time.Now().Unix())
     suite.temp_ns_file = fmt.Sprintf("%s/%s", suite.temp_ns_dir, suite.temp_file)

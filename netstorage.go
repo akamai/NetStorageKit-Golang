@@ -235,9 +235,9 @@ func (ns *Netstorage) Delete(nsPath string) (*http.Response, string, error) {
     })
 }
 
-// Quick_delete deletes a directory (i.e., recursively delete a directory tree)
+// QuickDelete deletes a directory (i.e., recursively delete a directory tree)
 // In order to use this func, you need to the privilege.
-func (ns *Netstorage) Quick_delete(nsPath string) (*http.Response, string, error) {
+func (ns *Netstorage) QuickDelete(nsPath string) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": "quick-delete&quick-delete=imreallyreallysure",
         "method": "POST",

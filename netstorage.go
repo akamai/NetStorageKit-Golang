@@ -1,4 +1,4 @@
-// package netstorage provides interfacing the Akamai Netstorage(File/Object Store) API http(s) call 
+// Package netstorage provides interfacing the Akamai Netstorage(File/Object Store) API http(s) call 
 package netstorage
 
 import (
@@ -18,8 +18,10 @@ import (
     "time"
 )
 
+// Netstorage struct provides all the necessary fields to
+// create authorization headers. 
+// They are on the Akamai Netstorage account page.
 // Hostname format should be "-nsu.akamaihd.net" and
-// Hostname, Keyname and Key information is the Akamai Netstorage account page.
 // Note that don't expose Key on public repository.
 // Ssl is decided by "NetNetstorage" function - string "s" means https and "" does http
 type Netstorage struct {
@@ -29,7 +31,7 @@ type Netstorage struct {
     Ssl         string
 }
 
-// Create and initiate Netstorage struct.
+// NewNetstorage func creates and initiates Netstorage struct.
 // ssl argument decides https(true) and http(false) which means "s" and "" 
 func NewNetstorage(hostname, keyname, key string, ssl bool) *Netstorage {
     if (hostname == "" && keyname == "" && key == "") {
@@ -42,7 +44,7 @@ func NewNetstorage(hostname, keyname, key string, ssl bool) *Netstorage {
     return &Netstorage{hostname, keyname, key, s}
 }
 
-// Only for upload action
+// Only for upload action (Used by _request func)
 func _ifUploadAction(kwargs map[string]string) (*io.Reader, error) {
     var data io.Reader
     if kwargs["action"] == "upload" {
@@ -56,7 +58,8 @@ func _ifUploadAction(kwargs map[string]string) (*io.Reader, error) {
     return &data, nil
 }
 
-// Reads http body from response, close response.Body and returns that string 
+// Reads http body from response, closes response.Body and  
+// returns that string (Used by _request func)
 func _getBody(kwargs map[string]string, response *http.Response) (string, error) {
     var body []byte
     var err error
@@ -89,7 +92,9 @@ func _getBody(kwargs map[string]string, response *http.Response) (string, error)
     return string(body), nil
 }
 
-//
+// Create the authorization headers with Netstorage struct values then
+// request to the Netstorage hostname, and return the response, 
+// the body string and the error.
 func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, string, error) {
     var err error
 
@@ -142,7 +147,7 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, string
     return response, body, err
 }
 
-// 
+// Dir returns the directory structure 
 func (ns *Netstorage) Dir(nsPath string) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": "dir&format=xml",
@@ -151,7 +156,12 @@ func (ns *Netstorage) Dir(nsPath string) (*http.Response, string, error) {
     })
 }
 
-//
+// Download returns the string "Download done" when the download completes. 
+// The first argument is Netstorage source path and 
+// the second is Local destination path. If you put only the first argument,
+// it downloads to current local path with the first argument's file name. 
+// From the third arguments will be ignored.
+// Note that you can downlad only a file, not a directory.
 func (ns *Netstorage) Download(path ...string) (*http.Response, string, error) {
     nsSource := path[0]
     if strings.HasSuffix(nsSource, "/") {
@@ -171,7 +181,7 @@ func (ns *Netstorage) Download(path ...string) (*http.Response, string, error) {
     })
 }
 
-//
+// Du returns the disk usage information for a directory
 func (ns *Netstorage) Du(nsPath string) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": "du&format=xml",
@@ -180,7 +190,7 @@ func (ns *Netstorage) Du(nsPath string) (*http.Response, string, error) {
     })
 }
 
-//
+// Stat returns the information about an object structure
 func (ns *Netstorage) Stat(nsPath string) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": "stat&format=xml",
@@ -189,7 +199,7 @@ func (ns *Netstorage) Stat(nsPath string) (*http.Response, string, error) {
     })
 }
 
-//
+// Mkdir creates an empty directory
 func (ns *Netstorage) Mkdir(nsPath string) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": "mkdir",
@@ -198,7 +208,7 @@ func (ns *Netstorage) Mkdir(nsPath string) (*http.Response, string, error) {
     })
 }
 
-//
+// Rmdir deletes an empty directory
 func (ns *Netstorage) Rmdir(nsPath string) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": "rmdir",
@@ -207,7 +217,7 @@ func (ns *Netstorage) Rmdir(nsPath string) (*http.Response, string, error) {
     })
 }
 
-//
+// Mtime changes a file’s mtime
 func (ns *Netstorage) Mtime(nsPath string, mtime int64) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": fmt.Sprintf("mtime&format=xml&mtime=%d", mtime),
@@ -216,7 +226,7 @@ func (ns *Netstorage) Mtime(nsPath string, mtime int64) (*http.Response, string,
     })
 }
 
-//
+// Delete deletes an object/symbolic link
 func (ns *Netstorage) Delete(nsPath string) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": "delete",
@@ -225,7 +235,8 @@ func (ns *Netstorage) Delete(nsPath string) (*http.Response, string, error) {
     })
 }
 
-//
+// Quick_delete deletes a directory (i.e., recursively delete a directory tree)
+// In order to use this func, you need to the privilege.
 func (ns *Netstorage) Quick_delete(nsPath string) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": "quick-delete&quick-delete=imreallyreallysure",
@@ -234,7 +245,7 @@ func (ns *Netstorage) Quick_delete(nsPath string) (*http.Response, string, error
     })
 }
 
-//
+// Rename renames a file or symbolic link.
 func (ns *Netstorage) Rename(nsTarget, nsDestination string) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": "rename&destination=" + url.QueryEscape(nsDestination),
@@ -243,7 +254,7 @@ func (ns *Netstorage) Rename(nsTarget, nsDestination string) (*http.Response, st
     })
 }
 
-//
+// Symlink creates a symbolic link.
 func (ns *Netstorage) Symlink(nsTarget, nsDestination string) (*http.Response, string, error) {
     return ns._request(map[string]string{
         "action": "symlink&target=" + url.QueryEscape(nsTarget),
@@ -252,7 +263,12 @@ func (ns *Netstorage) Symlink(nsTarget, nsDestination string) (*http.Response, s
     })
 }
 
-//
+// Upload uploads an object.
+// The first argument is the local source path and the second is
+// the Netstorage destination path.
+// If you put the directory path on nsDestination argument, that filename
+// will be the localSource argument filename
+// Note that you can upload only a file, not a directory
 func (ns *Netstorage) Upload(localSource, nsDestination string) (*http.Response, string, error) {
     s, err := os.Stat(localSource)
 

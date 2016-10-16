@@ -1,0 +1,6 @@
+{
+	"ImportPath": "github.com/astinchoi/netstoragekit-golang",
+	"GoVersion": "go1.7",
+	"GodepVersion": "v74",
+	"Deps": []
+}

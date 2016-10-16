@@ -1,7 +1,7 @@
-NetstorageAPI: Akamai Netstorage API for GO
+NetstorageKit-Golang: Akamai Netstorage API for Go
 ================================================
 
-NetstorageAPI is Akamai Netstorage (File/Object Store) API for Go.
+NetstorageKit-Golang is Akamai Netstorage (File/Object Store) API for Go.  
   
   
 Installation
@@ -10,7 +10,7 @@ Installation
 To install Netstorage API for Go:  
 
 ```bash
-$ go get github.com/AstinCHOI/NetStorageKit-GoLang/akamai/netstorage
+$ go get github.com/astinchoi/netstoragekit-golang
 ```
   
   
@@ -22,20 +22,20 @@ package main
 
 import (
   "fmt"
-  "github.com/AstinCHOI/NetStorageKit-GoLang/akamai/netstorage"
+  "github.com/astinchoi/netstoragekit-golang"
   "./secrets"
 )
 
 func main() {
-  NS_HOSTNAME := "astin-nsu.akamaihd.net"
-  NS_KEYNAME  := "astinastin"
-  NS_KEY := secrets.KEY // Don't expose NS_KEY on public repository.
-  NS_CPCODE := "360949"
+  nsHostname := "astin-nsu.akamaihd.net"
+  ns_Keyname  := "astinastin"
+  ns_Key := secrets.KEY // Don't expose ns_Key on public repository.
+  ns_Cpcode := "360949"
 
-  ns := netstorage.NewNetstorage(NS_HOSTNAME, NS_KEYNAME, NS_KEY, false)
+  ns := netstorage.NewNetstorage(nsHostname, ns_Keyname, ns_Key, false)
 
   local_source := "hello.txt"
-  ns_destination := fmt.Sprintf("/%s/hello.txt", NS_CPCODE) 
+  ns_destination := fmt.Sprintf("/%s/hello.txt", ns_Cpcode) 
 
   res, body, err := ns.Upload(local_source, ns_destination)
   if err != nil {
@@ -53,54 +53,47 @@ Methods
 -------
 
 ```go
-ns.Delete(NETSTORAGE_PATH)
-ns.Dir(NETSTORAGE_PATH)
-ns.Download(NETSTORAGE_SOURCE, LOCAL_DESTINATION)
-ns.Du(NETSTORAGE_PATH)
-ns.List(NETSTORAGE_PATH)
-ns.Mkdir("#{NETSTORAGE_PATH}/#{DIRECTORY_NAME}")
-ns.Mtime(NETSTORAGE_PATH, TIME) # ex) TIME: time.Now().Unix()
-ns.Quick_delete(NETSTORAGE_DIR) # needs to be enabled on the CP Code
-ns.Rename(NETSTORAGE_TARGET, NETSTORAGE_DESTINATION)
-ns.Rmdir(NETSTORAGE_DIR) # remove empty direcoty
-ns.Stat(NETSTORAGE_PATH)
-ns.Symlink(NETSTORAGE_TARGET, NETSTORAGE_DESTINATION)
-ns.Upload(LOCAL_SOURCE, NETSTORAGE_DESTINATION)
+ns.Delete(netstoragePath)
+ns.Dir(netstoragePath)
+ns.Download(netstorageSource, localDestintation)
+ns.Du(netstoragePath)
+ns.List(netstoragePath)
+ns.Mkdir(netstoragePath + newDirectory)
+ns.Mtime(netstoragePath, mTime) # ex) mTime: time.Now().Unix()
+ns.Quick_delete(netstorageDir) # needs to be enabled on the CP Code
+ns.Rename(netstorageTarget, netstorageDestination)
+ns.Rmdir(netstorageDir) # remove empty direcoty
+ns.Stat(netstoragePath)
+ns.Symlink(netstorageTarget, netstorageDestination)
+ns.Upload(LOCAL_SOURCE, netstorageDestination)
 
-// INFO: can "upload" Only a single file, not directory.
+// INFO: can "Upload" Only a single file, not directory.
 ```
   
   
 Test
 ----
-You can test all above methods with [unittest script](https://github.com/AstinCHOI/NetStorageKit-Golang/blob/master/netstorage_test.go). It uses [Testify](https://github.com/stretchr/testify) for the test:
+You can test all above methods with [unittest script](https://github.com/AstinCHOI/NetStorageKit-Golang/blob/master/netstorage_test.go):
 
 
 ```bash
-$ go get github.com/stretchr/testify
-...
-$ go test netstorage_test.go -v
-
-=== RUN TestExampleTestSuite
-=== RUN TestNetstorage
-[TEST] dir /360949 done
-[TEST] mkdir /360949/nst_1476344471 done
-[TEST] upload nst_1476344471.txt to /360949/nst_1476344471/nst_1476344471.txt done
-[TEST] du /360949/nst_1476344471 done
-[TEST] mtime /360949/nst_1476344471/nst_1476344471.txt done
-[TEST] stat /360949/nst_1476344471/nst_1476344471.txt done
-[TEST] symlink /360949/nst_1476344471/nst_1476344471.txt to /360949/nst_1476344471/nst_1476344471.txt_lnk done
-[TEST] rename /360949/nst_1476344471/nst_1476344471.txt to /360949/nst_1476344471/nst_1476344471.txt_rename done
-[TEST] download /360949/nst_1476344471/nst_1476344471.txt done
-[TEST] delete /360949/nst_1476344471/nst_1476344471.txt_rename done
-[TEST] delete /360949/nst_1476344471/nst_1476344471.txt_lnk done
-[TEST] rmdir /360949/nst_1476344471 done
---- PASS: TestNetstorage (11.00 seconds)
-[TEARDOWN] remove nst_1476344471.txt from local done
-[TEARDOWN] remove nst_1476344471.txt_rename from local done
---- PASS: TestExampleTestSuite (xx.xx seconds)
+$ go test
+[TEST] Dir /360949 done
+[TEST] Mkdir /360949/nst_1476598764 done
+[TEST] Upload nst_1476598764.txt to /360949/nst_1476598764/nst_1476598764.txt done
+[TEST] Du /360949/nst_1476598764 done
+[TEST] Mtime /360949/nst_1476598764/nst_1476598764.txt done
+[TEST] Stat /360949/nst_1476598764/nst_1476598764.txt done
+[TEST] Symlink /360949/nst_1476598764/nst_1476598764.txt to /360949/nst_1476598764/nst_1476598764.txt_lnk done
+[TEST] Rename /360949/nst_1476598764/nst_1476598764.txt to /360949/nst_1476598764/nst_1476598764.txt_rename done
+[TEST] Download /360949/nst_1476598764/nst_1476598764.txt done
+[TEST] delete /360949/nst_1476598764/nst_1476598764.txt_rename done
+[TEST] delete /360949/nst_1476598764/nst_1476598764.txt_lnk done
+[TEST] rmdir /360949/nst_1476598764 done
 PASS
-ok  	command-line-arguments	xx.xxxs
+[TEARDOWN] remove nst_1476598764.txt from local done
+[TEARDOWN] remove nst_1476598764.txt_rename from local done
+ok  	github.com/astinchoi/netstoragekit-golang	x.xxxs
 ```
   
   

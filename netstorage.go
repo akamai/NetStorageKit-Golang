@@ -1,16 +1,17 @@
 // Package netstorage provides interfacing the Akamai Netstorage(File/Object Store) API http(s) call 
 package netstorage
 
+
 import (
     "bytes"
     "crypto/hmac"
     "crypto/sha256"
     "encoding/base64"
-	"fmt"
+    "fmt"
     "io"
     "io/ioutil"
     "math/rand"
-	"net/http"
+    "net/http"
     "net/url"
     "os"
     "path"
@@ -23,7 +24,7 @@ import (
 // They are on the Akamai Netstorage account page.
 // Hostname format should be "-nsu.akamaihd.net" and
 // Note that don't expose Key on public repository.
-// Ssl is decided by "NetNetstorage" function - string "s" means https and "" does http
+// Ssl is decided by "NetNetstorage" function - string "s" means https and "" does http.
 type Netstorage struct {
     Hostname    string
     Keyname     string
@@ -32,7 +33,7 @@ type Netstorage struct {
 }
 
 // NewNetstorage func creates and initiates Netstorage struct.
-// ssl argument decides https(true) and http(false) which means "s" and "" 
+// ssl argument decides https(true) and http(false) which means "s" and "". 
 func NewNetstorage(hostname, keyname, key string, ssl bool) *Netstorage {
     if (hostname == "" && keyname == "" && key == "") {
         panic("[NetstorageError] You should input netstorage hostname, keyname and key all")
@@ -44,7 +45,7 @@ func NewNetstorage(hostname, keyname, key string, ssl bool) *Netstorage {
     return &Netstorage{hostname, keyname, key, s}
 }
 
-// Only for upload action (Used by _request func)
+// Only for upload action. (Used by _request func)
 func _ifUploadAction(kwargs map[string]string) (*io.Reader, error) {
     var data io.Reader
     if kwargs["action"] == "upload" {
@@ -52,14 +53,14 @@ func _ifUploadAction(kwargs map[string]string) (*io.Reader, error) {
         if err != nil {
             return nil, err
         }
-
+        
         data = bytes.NewReader(bArr)
     }
     return &data, nil
 }
 
 // Reads http body from response, closes response.Body and  
-// returns that string (Used by _request func)
+// returns that string. (Used by _request func)
 func _getBody(kwargs map[string]string, response *http.Response) (string, error) {
     var body []byte
     var err error
@@ -138,8 +139,8 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, string
     response, err := client.Do(request)
     
     if err != nil {
-		return nil, "", err
-	}
+        return nil, "", err
+    }
     
     defer response.Body.Close()
     body, err := _getBody(kwargs, response)
@@ -267,8 +268,8 @@ func (ns *Netstorage) Symlink(nsTarget, nsDestination string) (*http.Response, s
 // The first argument is the local source path and the second is
 // the Netstorage destination path.
 // If you put the directory path on nsDestination argument, that filename
-// will be the localSource argument filename
-// Note that you can upload only a file, not a directory
+// will be the localSource argument filename.
+// Note that you can upload only a file, not a directory.
 func (ns *Netstorage) Upload(localSource, nsDestination string) (*http.Response, string, error) {
     s, err := os.Stat(localSource)
 

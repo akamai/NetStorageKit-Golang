@@ -1,7 +1,11 @@
-NetstorageKit-Golang: Akamai Netstorage API for Go
-================================================
+[![Go Report Card](https://goreportcard.com/badge/github.com/AstinCHOI/NetStorageKit-Golang)](https://goreportcard.com/report/github.com/AstinCHOI/NetStorageKit-Golang)
+[![GoDoc](https://godoc.org/github.com/AstinCHOI/NetStorageKit-Golang?status.svg)](https://godoc.org/github.com/AstinCHOI/NetStorageKit-Golang)
+[![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/akamai-open/AstinCHOI/NetStorageKit-Golang/blob/master/LICENSE)
 
-NetstorageKit-Golang is Akamai Netstorage (File/Object Store) API for Go.  
+NetstorageKit-Golang: Akamai Netstorage API for Go
+==================================================
+
+NetstorageKit-Golang is Akamai Netstorage (File/Object Store) API for Go. 
   
   
 Installation
@@ -23,21 +27,21 @@ package main
 import (
   "fmt"
   "github.com/astinchoi/netstoragekit-golang"
-  "./secrets"
+  "./secrets" // in the .gitignore file
 )
 
 func main() {
   nsHostname := "astin-nsu.akamaihd.net"
-  ns_Keyname  := "astinastin"
-  ns_Key := secrets.KEY // Don't expose ns_Key on public repository.
-  ns_Cpcode := "360949"
+  nsKeyname  := "astinastin"
+  nsKey := secrets.KEY // Don't expose nsKey on public repository.
+  nsCpcode := "360949"
 
-  ns := netstorage.NewNetstorage(nsHostname, ns_Keyname, ns_Key, false)
+  ns := netstorage.NewNetstorage(nsHostname, nsKeyname, ns_Key, false)
 
-  local_source := "hello.txt"
-  ns_destination := fmt.Sprintf("/%s/hello.txt", ns_Cpcode) 
+  localSource := "hello.txt"
+  nsDestination := fmt.Sprintf("/%s/hello.txt", nsCpcode) // or "/%s/" is same. 
 
-  res, body, err := ns.Upload(local_source, ns_destination)
+  res, body, err := ns.Upload(localSource, nsDestination)
   if err != nil {
       // Do something
   }
@@ -57,15 +61,14 @@ ns.Delete(netstoragePath)
 ns.Dir(netstoragePath)
 ns.Download(netstorageSource, localDestintation)
 ns.Du(netstoragePath)
-ns.List(netstoragePath)
 ns.Mkdir(netstoragePath + newDirectory)
-ns.Mtime(netstoragePath, mTime) # ex) mTime: time.Now().Unix()
-ns.Quick_delete(netstorageDir) # needs to be enabled on the CP Code
+ns.Mtime(netstoragePath, mTime) // ex) mTime: time.Now().Unix()
+ns.QuickDelete(netstorageDir) // needs to the privilege on the CP Code
 ns.Rename(netstorageTarget, netstorageDestination)
-ns.Rmdir(netstorageDir) # remove empty direcoty
+ns.Rmdir(netstorageDir) // remove empty direcoty
 ns.Stat(netstoragePath)
 ns.Symlink(netstorageTarget, netstorageDestination)
-ns.Upload(LOCAL_SOURCE, netstorageDestination)
+ns.Upload(localSource, netstorageDestination)
 
 // INFO: can "Upload" Only a single file, not directory.
 ```
@@ -73,7 +76,7 @@ ns.Upload(LOCAL_SOURCE, netstorageDestination)
   
 Test
 ----
-You can test all above methods with [unittest script](https://github.com/AstinCHOI/NetStorageKit-Golang/blob/master/netstorage_test.go):
+You can test all above methods with the [unittest script](https://github.com/AstinCHOI/NetStorageKit-Golang/blob/master/netstorage_test.go) (NOTE: You should input nsHostname, nsKeyname, nsKey and nsCpcode in the script):
 
 
 ```bash

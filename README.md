@@ -36,7 +36,7 @@ func main() {
   nsKey := secrets.KEY // Don't expose nsKey on public repository.
   nsCpcode := "360949"
 
-  ns := netstorage.NewNetstorage(nsHostname, nsKeyname, ns_Key, false)
+  ns := netstorage.NewNetstorage(nsHostname, nsKeyname, nsKey, false)
 
   localSource := "hello.txt"
   nsDestination := fmt.Sprintf("/%s/hello.txt", nsCpcode) // or "/%s/" is same. 

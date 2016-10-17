@@ -23,7 +23,7 @@ import (
 // They are on the Akamai Netstorage account page.
 // Hostname format should be "-nsu.akamaihd.net" and
 // Note that don't expose Key on public repository.
-// Ssl is decided by "NetNetstorage" function - string "s" means https and "" does http.
+// "Ssl" element is decided by "NetNetstorage" function - string "s" means https and "" does http.
 type Netstorage struct {
 	Hostname string
 	Keyname  string
@@ -32,9 +32,9 @@ type Netstorage struct {
 }
 
 // NewNetstorage func creates and initiates Netstorage struct.
-// ssl argument decides https(true) and http(false) which means "s" and "".
+// ssl parameter decides https(true) and http(false) which means "s" and "".
 func NewNetstorage(hostname, keyname, key string, ssl bool) *Netstorage {
-	if hostname == "" && keyname == "" && key == "" {
+	if hostname == "" || keyname == "" || key == "" {
 		panic("[NetstorageError] You should input netstorage hostname, keyname and key all")
 	}
 	s := ""
@@ -157,10 +157,10 @@ func (ns *Netstorage) Dir(nsPath string) (*http.Response, string, error) {
 }
 
 // Download returns the string "Download done" when the download completes.
-// The first argument is Netstorage source path and
-// the second is Local destination path. If you put only the first argument,
-// it downloads to current local path with the first argument's file name.
-// From the third arguments will be ignored.
+// The first parameter is Netstorage source path and
+// the second is Local destination path. If you put only the first parameter,
+// it downloads to current local path with the first parameter's file name.
+// From the third parameters will be ignored.
 // Note that you can downlad only a file, not a directory.
 func (ns *Netstorage) Download(path ...string) (*http.Response, string, error) {
 	nsSource := path[0]
@@ -264,10 +264,10 @@ func (ns *Netstorage) Symlink(nsTarget, nsDestination string) (*http.Response, s
 }
 
 // Upload uploads an object.
-// The first argument is the local source path and the second is
+// The first parameter is the local source path and the second is
 // the Netstorage destination path.
-// If you put the directory path on nsDestination argument, that filename
-// will be the localSource argument filename.
+// If you put the directory path on "nsDestination" parameter, that filename
+// will be the "localSource" parameter filename.
 // Note that you can upload only a file, not a directory.
 func (ns *Netstorage) Upload(localSource, nsDestination string) (*http.Response, string, error) {
 	s, err := os.Stat(localSource)

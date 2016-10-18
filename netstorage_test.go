@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"testing"
 	"time"
 
@@ -100,7 +101,8 @@ func TestNetstorage(t *testing.T) {
 		return
 	}
 
-	err = ioutil.WriteFile(tempFile, []byte("Hello, Netstorage API World!"), 0666)
+	testString := "Hello, Netstorage API World!"
+	err = ioutil.WriteFile(tempFile, []byte(testString), 0666)
 	check(err)
 	res, body, err = ns.Upload(tempFile, tempNsFile)
 	wrong = assertEqual(t, res.StatusCode, 200,
@@ -170,7 +172,9 @@ func TestNetstorage(t *testing.T) {
 	}
 
 	res, body, err = ns.Download(tempNsFile + "_rename")
-	wrong = assertEqual(t, res.StatusCode, 200,
+	data, err := ioutil.ReadFile(tempFile + "_rename")
+	check(err)
+	wrong = assertEqual(t, string(data), testString,
 		"Download",
 		fmt.Sprintf("[TEST] Download %s done\n", tempNsFile),
 		"Download Fail",
@@ -212,6 +216,19 @@ func TestNetstorage(t *testing.T) {
 		return
 	}
 
+}
+
+func TestNetstorageError(t *testing.T) {
+	_, body, err := ns.Dir("invalid ns path")
+	wrong := assertEqual(t, reflect.TypeOf(err).Kind(), "error",
+		"Dir",
+		fmt.Sprintf("[TEST] Dir /%s done\n", nsCpcode),
+		body,
+		err,
+	)
+	if wrong {
+		return
+	}
 }
 
 func TestMain(m *testing.M) {

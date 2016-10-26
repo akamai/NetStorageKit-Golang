@@ -81,21 +81,26 @@ You can test all above methods with the [unittest script](https://github.com/Ast
 
 ```bash
 $ go test
+### Netstorage Test ###
 [TEST] Dir /360949 done
-[TEST] Mkdir /360949/nst_1476598764 done
-[TEST] Upload nst_1476598764.txt to /360949/nst_1476598764/nst_1476598764.txt done
-[TEST] Du /360949/nst_1476598764 done
-[TEST] Mtime /360949/nst_1476598764/nst_1476598764.txt done
-[TEST] Stat /360949/nst_1476598764/nst_1476598764.txt done
-[TEST] Symlink /360949/nst_1476598764/nst_1476598764.txt to /360949/nst_1476598764/nst_1476598764.txt_lnk done
-[TEST] Rename /360949/nst_1476598764/nst_1476598764.txt to /360949/nst_1476598764/nst_1476598764.txt_rename done
-[TEST] Download /360949/nst_1476598764/nst_1476598764.txt done
-[TEST] delete /360949/nst_1476598764/nst_1476598764.txt_rename done
-[TEST] delete /360949/nst_1476598764/nst_1476598764.txt_lnk done
-[TEST] rmdir /360949/nst_1476598764 done
+[TEST] Mkdir /360949/nst_1477474457 done
+[TEST] Upload nst_1477474457.txt to /360949/nst_1477474457/nst_1477474457.txt done
+[TEST] Du /360949/nst_1477474457 done
+[TEST] Mtime /360949/nst_1477474457/nst_1477474457.txt done
+[TEST] Stat /360949/nst_1477474457/nst_1477474457.txt done
+[TEST] Symlink /360949/nst_1477474457/nst_1477474457.txt to /360949/nst_1477474457/nst_1477474457.txt_lnk done
+[TEST] Rename /360949/nst_1477474457/nst_1477474457.txt to /360949/nst_1477474457/nst_1477474457.txt_rename done
+[TEST] Download /360949/nst_1477474457/nst_1477474457.txt done
+[TEST] delete /360949/nst_1477474457/nst_1477474457.txt_rename done
+[TEST] delete /360949/nst_1477474457/nst_1477474457.txt_lnk done
+[TEST] rmdir /360949/nst_1477474457 done
+
+### Error Test ###
+[TEST] Netstorage invalid path test done
+
 PASS
-[TEARDOWN] remove nst_1476598764.txt from local done
-[TEARDOWN] remove nst_1476598764.txt_rename from local done
+[TEARDOWN] remove nst_1477474457.txt from local done
+[TEARDOWN] remove nst_1477474457.txt_rename from local done
 ok  	github.com/astinchoi/netstoragekit-golang	x.xxxs
 ```
   

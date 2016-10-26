@@ -59,7 +59,7 @@ func teardown() {
 	}
 }
 
-func assertEqual(t *testing.T, got, expected interface{}, name, success, fail string, err error) bool {
+func assertEqual(t *testing.T, got, expected interface{}, funcName, success, fail string, err error) bool {
 	if err != nil {
 		fmt.Println(err)
 		return true
@@ -67,7 +67,7 @@ func assertEqual(t *testing.T, got, expected interface{}, name, success, fail st
 	if got != expected {
 		t.Error(
 			fmt.Sprintf("\n"),
-			fmt.Sprintf("Function: %s\n", name),
+			fmt.Sprintf("Function: %s\n", funcName),
 			fmt.Sprintf("Expected: %v\n", expected),
 			fmt.Sprintf("Got: %v\n", got),
 			fmt.Sprintf("Message: %s\n", fail),
@@ -79,6 +79,7 @@ func assertEqual(t *testing.T, got, expected interface{}, name, success, fail st
 }
 
 func TestNetstorage(t *testing.T) {
+	fmt.Println("### Netstorage Test ###")
 	res, body, err := ns.Dir("/" + nsCpcode)
 	wrong := assertEqual(t, res.StatusCode, 200,
 		"Dir",
@@ -215,20 +216,23 @@ func TestNetstorage(t *testing.T) {
 	if wrong {
 		return
 	}
+	fmt.Println("")
 
 }
 
 func TestNetstorageError(t *testing.T) {
+	fmt.Println("### Error Test ###")
 	_, body, err := ns.Dir("invalid ns path")
-	wrong := assertEqual(t, reflect.TypeOf(err).Kind(), "error",
+	wrong := assertEqual(t, reflect.TypeOf(err).String(), "*errors.errorString",
 		"Dir",
-		fmt.Sprintf("[TEST] Dir /%s done\n", nsCpcode),
+		fmt.Sprintf("[TEST] Netstorage invalid path test done\n"),
 		body,
-		err,
+		nil,
 	)
 	if wrong {
 		return
 	}
+	fmt.Println("")
 }
 
 func TestMain(m *testing.M) {

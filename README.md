@@ -96,7 +96,9 @@ $ go test
 [TEST] rmdir /360949/nst_1477474457 done
 
 ### Error Test ###
-[TEST] Netstorage invalid path test done
+[TEST] Dir: netstorage invalid path test done
+[TEST] Upload: local invalid path test done
+[TEST] Download: netstorage directory path test done
 
 PASS
 [TEARDOWN] remove nst_1477474457.txt from local done

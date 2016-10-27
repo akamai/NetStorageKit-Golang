@@ -225,13 +225,36 @@ func TestNetstorageError(t *testing.T) {
 	_, body, err := ns.Dir("invalid ns path")
 	wrong := assertEqual(t, reflect.TypeOf(err).String(), "*errors.errorString",
 		"Dir",
-		fmt.Sprintf("[TEST] Netstorage invalid path test done\n"),
+		fmt.Sprintf("[TEST] Dir: netstorage invalid path test done\n"),
 		body,
 		nil,
 	)
 	if wrong {
 		return
 	}
+
+	_, body, err = ns.Upload("invalid local path", tempNsFile)
+	wrong = assertEqual(t, reflect.TypeOf(err).String(), "*os.PathError",
+		"Upload",
+		fmt.Sprintf("[TEST] Upload: local invalid path test done\n"),
+		body,
+		nil,
+	)
+	if wrong {
+		return
+	}
+
+	_, body, err = ns.Download("/123456/directory/", tempFile)
+	wrong = assertEqual(t, reflect.TypeOf(err).String(), "*errors.errorString",
+		"Download",
+		fmt.Sprintf("[TEST] Download: netstorage directory path test done\n"),
+		body,
+		nil,
+	)
+	if wrong {
+		return
+	}
+
 	fmt.Println("")
 }
 

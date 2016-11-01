@@ -1,6 +1,6 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/AstinCHOI/NetStorageKit-Golang)](https://goreportcard.com/report/github.com/AstinCHOI/NetStorageKit-Golang)
-[![GoDoc](https://godoc.org/github.com/AstinCHOI/NetStorageKit-Golang?status.svg)](https://godoc.org/github.com/AstinCHOI/NetStorageKit-Golang)
-[![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/akamai-open/AstinCHOI/NetStorageKit-Golang/blob/master/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/akamai-open/NetStorageKit-Golang)](https://goreportcard.com/report/github.com/akamai-open/NetStorageKit-Golang)
+[![GoDoc](https://godoc.org/github.com/akamai-open/NetStorageKit-Golang?status.svg)](https://godoc.org/github.com/akamai-open/NetStorageKit-Golang)
+[![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/akamai-open/akamai-open/NetStorageKit-Golang/blob/master/LICENSE)
 
 NetstorageKit-Golang: Akamai Netstorage API for Go
 ==================================================
@@ -14,7 +14,7 @@ Installation
 To install Netstorage API for Go:  
 
 ```bash
-$ go get github.com/astinchoi/netstoragekit-golang
+$ go get github.com/akamai-open/netstoragekit-golang
 ```
   
   
@@ -26,7 +26,7 @@ package main
 
 import (
   "fmt"
-  "github.com/astinchoi/netstoragekit-golang"
+  "github.com/akamai-open/netstoragekit-golang"
   "./secrets" // in the .gitignore file
 )
 
@@ -76,7 +76,7 @@ ns.Upload(localSource, netstorageDestination)
   
 Test
 ----
-You can test all above methods with the [unittest script](https://github.com/AstinCHOI/NetStorageKit-Golang/blob/master/netstorage_test.go) (NOTE: You should input nsHostname, nsKeyname, nsKey and nsCpcode in the script):
+You can test all above methods with the [unittest script](https://github.com/akamai-open/NetStorageKit-Golang/blob/master/netstorage_test.go) (NOTE: You should input nsHostname, nsKeyname, nsKey and nsCpcode in the script):
 
 
 ```bash
@@ -103,7 +103,7 @@ $ go test
 PASS
 [TEARDOWN] remove nst_1477474457.txt from local done
 [TEARDOWN] remove nst_1477474457.txt_rename from local done
-ok  	github.com/astinchoi/netstoragekit-golang	x.xxxs
+ok  	github.com/akamai-open/netstoragekit-golang	x.xxxs
 ```
   
   

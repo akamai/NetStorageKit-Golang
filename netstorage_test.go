@@ -7,13 +7,14 @@ import (
 	"reflect"
 	"testing"
 	"time"
-
-	"./spike/secrets"
+	//"./spike/secrets"
 )
 
 var nsHostname = "astin-nsu.akamaihd.net"
-var nsKeyname = "astinastin"
-var nsKey = secrets.KEY // Don't expose nsKey on your public repository
+var nsKeyname = "astinapi"
+
+// var nsKey = secrets.KEY // Don't expose nsKey on your public repository
+var nsKey = os.Getenv("NS_KEY")
 var nsCpcode = "360949"
 
 var ns = NewNetstorage(nsHostname, nsKeyname, nsKey, false)

@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/akamai-open/NetStorageKit-Golang.svg?branch=master)](https://travis-ci.org/akamai-open/NetStorageKit-Golang)
 [![Go Report Card](https://goreportcard.com/badge/github.com/akamai-open/NetStorageKit-Golang)](https://goreportcard.com/report/github.com/akamai-open/NetStorageKit-Golang)
 [![GoDoc](https://godoc.org/github.com/akamai-open/NetStorageKit-Golang?status.svg)](https://godoc.org/github.com/akamai-open/NetStorageKit-Golang)
 [![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/akamai-open/akamai-open/NetStorageKit-Golang/blob/master/LICENSE)
@@ -32,7 +33,7 @@ import (
 
 func main() {
   nsHostname := "astin-nsu.akamaihd.net"
-  nsKeyname  := "astinastin"
+  nsKeyname  := "astinapi"
   nsKey := secrets.KEY // Don't expose nsKey on public repository.
   nsCpcode := "360949"
 

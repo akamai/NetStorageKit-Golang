@@ -1,0 +1,19 @@
+language: go
+
+go:
+  - 1.1
+  - 1.2
+  - 1.3
+  - 1.4
+  - 1.5
+  - 1.6
+  - 1.7
+  - master
+
+env:
+  global:
+    - secure: Cy0krkSGqYzf/DZAXfr0JNcOCfqNQe35qF/6moSaThcJ9odM+RM+zdDkpg7Lv2EkOBsjwg6RbNy/WMdDyVmn50WBsYdq3h3NgaEwkDfSIFuZAO8BiHT+1APBVvTSPBd4VLvYoB4yXsJP+ekDDjT6ohMWfSSQjq8LnXmirJlm+h3uT30zti+Ifu1TTiWNnIX8oY9tmFpvm6U2jHcGCzehRG/2HjNIE/uYuzPWIeJFLuTxMx401gieDHCVAU+Y5jikYup7WevhIIpiwsmIjh/tKbuQzHF14Xe/l345Gd9SXg4NL4PMR6bzT8zVovM5Vg7l0ot0Mdv+6hA+Ji/hbbMsdQeKAmqndRbgvEd9cf3qBgB8Zre6nP03do5Ao28i1IrXp6nAZsqE7+Hen/NLnSChjaMQLxj+l9ODWmbEX7m5DMC28bdTP/wUIf9qxZiPG8UPzeFlZX2iPHdz6/AomGJ1qUk6GFDb4Q1J0iufPLLZ2TBgmYH92jathPO8GfGSOaGuSTrkrDK88sl3S6ohHp3/MT8oIYlkIM4NIpVcrIkANoEFf5cR/4H1tyXbjhT41NPdw27pOHmHRDAdLXP0GdNpL/ZWz2dbf9Y22FKiFMBh8uCmKoLdbMszdl+2fwSmYzP/bntKqEGLlqvoZ+4UXuy/3KP3ViGdAY8EW65Jk3yVvlc=
+
+script:
+  - export NS_KEY=$NS_KEY
+  - go test

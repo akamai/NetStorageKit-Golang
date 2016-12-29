@@ -6,7 +6,7 @@
 NetstorageKit-Golang: Akamai Netstorage API for Go
 ==================================================
 
-NetstorageKit-Golang is Akamai Netstorage (File/Object Store) API for Go. 
+NetstorageKit-Golang is Akamai Netstorage (File/Object Store) API for Go 1.4+. 
   
   
 Installation

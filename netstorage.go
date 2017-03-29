@@ -29,6 +29,7 @@ type Netstorage struct {
 	Keyname  string
 	Key      string
 	Ssl      string
+	Client   *http.Client
 }
 
 // NewNetstorage func creates and initiates Netstorage struct.
@@ -41,7 +42,7 @@ func NewNetstorage(hostname, keyname, key string, ssl bool) *Netstorage {
 	if ssl {
 		s = "s"
 	}
-	return &Netstorage{hostname, keyname, key, s}
+	return &Netstorage{hostname, keyname, key, s, http.DefaultClient}
 }
 
 // Only for upload action. (Used by _request func)
@@ -134,8 +135,7 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, string
 	request.Header.Add("Accept-Encoding", "identity")
 	request.Header.Add("User-Agent", "NetStorageKit-Golang")
 
-	client := &http.Client{}
-	response, err := client.Do(request)
+	response, err := ns.Client.Do(request)
 
 	if err != nil {
 		return nil, "", err

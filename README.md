@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/akamai-open/NetStorageKit-Golang.svg?branch=master)](https://travis-ci.org/akamai-open/NetStorageKit-Golang)
-[![Go Report Card](https://goreportcard.com/badge/github.com/akamai-open/NetStorageKit-Golang)](https://goreportcard.com/report/github.com/akamai-open/NetStorageKit-Golang)
-[![GoDoc](https://godoc.org/github.com/akamai-open/NetStorageKit-Golang?status.svg)](https://godoc.org/github.com/akamai-open/NetStorageKit-Golang)
-[![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/akamai-open/akamai-open/NetStorageKit-Golang/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/akamai/NetStorageKit-Golang.svg?branch=master)](https://travis-ci.org/akamai/NetStorageKit-Golang)
+[![Go Report Card](https://goreportcard.com/badge/github.com/akamai/NetStorageKit-Golang)](https://goreportcard.com/report/github.com/akamai/NetStorageKit-Golang)
+[![GoDoc](https://godoc.org/github.com/akamai/NetStorageKit-Golang?status.svg)](https://godoc.org/github.com/akamai/NetStorageKit-Golang)
+[![License](http://img.shields.io/:license-apache-blue.svg)](https://github.com/akamai/akamai/NetStorageKit-Golang/blob/master/LICENSE)
 
 NetstorageKit-Golang: Akamai Netstorage API for Go
 ==================================================
@@ -15,7 +15,7 @@ Installation
 To install Netstorage API for Go:  
 
 ```bash
-$ go get github.com/akamai-open/netstoragekit-golang
+$ go get github.com/akamai/netstoragekit-golang
 ```
   
   
@@ -27,7 +27,7 @@ package main
 
 import (
   "fmt"
-  "github.com/akamai-open/netstoragekit-golang"
+  "github.com/akamai/netstoragekit-golang"
   "./secrets" // in the .gitignore file
 )
 
@@ -77,7 +77,7 @@ ns.Upload(localSource, netstorageDestination)
   
 Test
 ----
-You can test all above methods with the [unittest script](https://github.com/akamai-open/NetStorageKit-Golang/blob/master/netstorage_test.go) (NOTE: You should input nsHostname, nsKeyname, nsKey and nsCpcode in the script):
+You can test all above methods with the [unittest script](https://github.com/akamai/NetStorageKit-Golang/blob/master/netstorage_test.go) (NOTE: You should input nsHostname, nsKeyname, nsKey and nsCpcode in the script):
 
 
 ```bash
@@ -104,7 +104,7 @@ $ go test
 PASS
 [TEARDOWN] remove nst_1477474457.txt from local done
 [TEARDOWN] remove nst_1477474457.txt_rename from local done
-ok  	github.com/akamai-open/netstoragekit-golang	x.xxxs
+ok  	github.com/akamai/netstoragekit-golang	x.xxxs
 ```
   
   

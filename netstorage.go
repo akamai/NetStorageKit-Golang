@@ -48,7 +48,7 @@ func NewNetstorage(hostname, keyname, key string, ssl bool) *Netstorage {
 // Only for upload action. (Used by _request func)
 func _ifUploadAction(kwargs map[string]string) (*io.Reader, error) {
 	var data io.Reader
-	if kwargs["action"] == "upload" {
+	if strings.Contains(kwargs["action"], "upload") {
 		bArr, err := ioutil.ReadFile(kwargs["source"])
 		if err != nil {
 			return nil, err
@@ -145,6 +145,29 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, string
 	body, err := _getBody(kwargs, response)
 
 	return response, body, err
+}
+
+func (ns *Netstorage) _upload(localSource, nsDestination string, action string) (*http.Response, string, error) {
+	s, err := os.Stat(localSource)
+
+	if err != nil {
+		return nil, "", err
+	}
+
+	if s.Mode().IsRegular() {
+		if strings.HasSuffix(nsDestination, "/") {
+			nsDestination = nsDestination + path.Base(localSource)
+		}
+	} else {
+		return nil, "", fmt.Errorf("[NetstorageError] You should upload a file, not %s", localSource)
+	}
+
+	return ns._request(map[string]string{
+		"action": action,
+		"method": "PUT",
+		"source": localSource,
+		"path":   nsDestination,
+	})
 }
 
 // Dir returns the directory structure
@@ -270,24 +293,15 @@ func (ns *Netstorage) Symlink(nsTarget, nsDestination string) (*http.Response, s
 // will be the "localSource" parameter filename.
 // Note that you can upload only a file, not a directory.
 func (ns *Netstorage) Upload(localSource, nsDestination string) (*http.Response, string, error) {
-	s, err := os.Stat(localSource)
+	return ns._upload(localSource, nsDestination, "upload")
+}
 
-	if err != nil {
-		return nil, "", err
-	}
-
-	if s.Mode().IsRegular() {
-		if strings.HasSuffix(nsDestination, "/") {
-			nsDestination = nsDestination + path.Base(localSource)
-		}
-	} else {
-		return nil, "", fmt.Errorf("[NetstorageError] You should upload a file, not %s", localSource)
-	}
-
-	return ns._request(map[string]string{
-		"action": "upload",
-		"method": "PUT",
-		"source": localSource,
-		"path":   nsDestination,
-	})
+// UploadAndIndexZip uploads an zip file and makes index to use in Serve from Zip feature.
+// The first parameter is the local source path and the second is
+// the Netstorage destination path.
+// If you put the directory path on "nsDestination" parameter, that filename
+// will be the "localSource" parameter filename.
+// Note that you can upload only a file, not a directory.
+func (ns *Netstorage) UploadAndIndexZip(localSource, nsDestination string) (*http.Response, string, error) {
+	return ns._upload(localSource, nsDestination, "upload&index-zip=1")
 }

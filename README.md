@@ -69,7 +69,8 @@ ns.Rename(netstorageTarget, netstorageDestination)
 ns.Rmdir(netstorageDir) // remove empty direcoty
 ns.Stat(netstoragePath)
 ns.Symlink(netstorageTarget, netstorageDestination)
-ns.Upload(localSource, netstorageDestination)
+ns.Upload(localSource, netstorageDestination) // upload single file
+ns.UploadAndIndexZip(localSource, netstorageDestination) // upload and index zip archive
 
 // INFO: can "Upload" Only a single file, not directory.
 ```

@@ -1,6 +1,7 @@
 package netstorage
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -110,6 +111,17 @@ func TestNetstorage(t *testing.T) {
 	wrong = assertEqual(t, res.StatusCode, 200,
 		"Upload",
 		fmt.Sprintf("[TEST] Upload %s to %s done\n", tempFile, tempNsFile),
+		body,
+		err,
+	)
+	if wrong {
+		return
+	}
+
+	res, body, err = ns.UploadContent(bytes.NewBufferString(testString), tempNsFile)
+	wrong = assertEqual(t, res.StatusCode, 200,
+		"Upload",
+		fmt.Sprintf("[TEST] Upload content '%s' to %s done\n", testString, tempNsFile),
 		body,
 		err,
 	)

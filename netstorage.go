@@ -46,31 +46,31 @@ func NewNetstorage(hostname, keyname, key string, ssl bool) *Netstorage {
 }
 
 // Only for upload action. (Used by _request func)
-func _ifUploadAction(kwargs map[string]string) (*io.Reader, error) {
+func _ifUploadAction(kwargs map[string]interface{}) (io.Reader, error) {
 	var data io.Reader
-	if kwargs["action"] == "upload" {
-		bArr, err := ioutil.ReadFile(kwargs["source"])
+	if kwargs["action"].(string) == "upload" {
+		bArr, err := ioutil.ReadFile(kwargs["source"].(string))
 		if err != nil {
 			return nil, err
 		}
 
 		data = bytes.NewReader(bArr)
 	}
-	return &data, nil
+	return data, nil
 }
 
 // Reads http body from response, closes response.Body and
 // returns that string. (Used by _request func)
-func _getBody(kwargs map[string]string, response *http.Response) (string, error) {
+func _getBody(kwargs map[string]interface{}, response *http.Response) (string, error) {
 	var body []byte
 	var err error
-	if kwargs["action"] == "download" && response.StatusCode == 200 {
-		localDestination := kwargs["destination"]
+	if kwargs["action"].(string) == "download" && response.StatusCode == 200 {
+		localDestination := kwargs["destination"].(string)
 
 		if localDestination == "" {
-			localDestination = path.Base(kwargs["path"])
+			localDestination = path.Base(kwargs["path"].(string))
 		} else if s, err := os.Stat(localDestination); err == nil && s.IsDir() {
-			localDestination = path.Join(localDestination, path.Base(kwargs["path"]))
+			localDestination = path.Join(localDestination, path.Base(kwargs["path"].(string)))
 		}
 
 		out, err := os.Create(localDestination)
@@ -96,17 +96,17 @@ func _getBody(kwargs map[string]string, response *http.Response) (string, error)
 // Create the authorization headers with Netstorage struct values then
 // request to the Netstorage hostname, and return the response,
 // the body string and the error.
-func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, string, error) {
+func (ns *Netstorage) _request(kwargs map[string]interface{}) (*http.Response, string, error) {
 	var err error
 
-	nsPath := kwargs["path"]
+	nsPath := kwargs["path"].(string)
 	if u, err := url.Parse(nsPath); strings.HasPrefix(nsPath, "/") && err == nil {
 		nsPath = u.RequestURI()
 	} else {
 		return nil, "", fmt.Errorf("[Netstorage Error] Invalid netstorage path: %s", nsPath)
 	}
 
-	acsAction := fmt.Sprintf("version=1&action=%s", kwargs["action"])
+	acsAction := fmt.Sprintf("version=1&action=%s", kwargs["action"].(string))
 	acsAuthData := fmt.Sprintf("5, 0.0.0.0, 0.0.0.0, %d, %d, %s",
 		time.Now().Unix(),
 		rand.Intn(100000),
@@ -117,13 +117,18 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, string
 	mac.Write([]byte(acsAuthData + signString))
 	acsAuthSign := base64.StdEncoding.EncodeToString(mac.Sum(nil))
 
-	data, err := _ifUploadAction(kwargs)
-	if err != nil {
-		return nil, "", err
+	var data io.Reader
+	if _, exists := kwargs["content"]; exists {
+		data = kwargs["content"].(io.Reader)
+	} else {
+		data, err = _ifUploadAction(kwargs)
+		if err != nil {
+			return nil, "", err
+		}
 	}
 
-	request, err := http.NewRequest(kwargs["method"],
-		fmt.Sprintf("http%s://%s%s", ns.Ssl, ns.Hostname, nsPath), *data)
+	request, err := http.NewRequest(kwargs["method"].(string),
+		fmt.Sprintf("http%s://%s%s", ns.Ssl, ns.Hostname, nsPath), data)
 
 	if err != nil {
 		return nil, "", err
@@ -149,7 +154,7 @@ func (ns *Netstorage) _request(kwargs map[string]string) (*http.Response, string
 
 // Dir returns the directory structure
 func (ns *Netstorage) Dir(nsPath string) (*http.Response, string, error) {
-	return ns._request(map[string]string{
+	return ns._request(map[string]interface{}{
 		"action": "dir&format=xml",
 		"method": "GET",
 		"path":   nsPath,
@@ -173,7 +178,7 @@ func (ns *Netstorage) Download(path ...string) (*http.Response, string, error) {
 		localDestination = path[1]
 	}
 
-	return ns._request(map[string]string{
+	return ns._request(map[string]interface{}{
 		"action":      "download",
 		"method":      "GET",
 		"path":        nsSource,
@@ -183,7 +188,7 @@ func (ns *Netstorage) Download(path ...string) (*http.Response, string, error) {
 
 // Du returns the disk usage information for a directory
 func (ns *Netstorage) Du(nsPath string) (*http.Response, string, error) {
-	return ns._request(map[string]string{
+	return ns._request(map[string]interface{}{
 		"action": "du&format=xml",
 		"method": "GET",
 		"path":   nsPath,
@@ -192,7 +197,7 @@ func (ns *Netstorage) Du(nsPath string) (*http.Response, string, error) {
 
 // Stat returns the information about an object structure
 func (ns *Netstorage) Stat(nsPath string) (*http.Response, string, error) {
-	return ns._request(map[string]string{
+	return ns._request(map[string]interface{}{
 		"action": "stat&format=xml",
 		"method": "GET",
 		"path":   nsPath,
@@ -201,7 +206,7 @@ func (ns *Netstorage) Stat(nsPath string) (*http.Response, string, error) {
 
 // Mkdir creates an empty directory
 func (ns *Netstorage) Mkdir(nsPath string) (*http.Response, string, error) {
-	return ns._request(map[string]string{
+	return ns._request(map[string]interface{}{
 		"action": "mkdir",
 		"method": "POST",
 		"path":   nsPath,
@@ -210,7 +215,7 @@ func (ns *Netstorage) Mkdir(nsPath string) (*http.Response, string, error) {
 
 // Rmdir deletes an empty directory
 func (ns *Netstorage) Rmdir(nsPath string) (*http.Response, string, error) {
-	return ns._request(map[string]string{
+	return ns._request(map[string]interface{}{
 		"action": "rmdir",
 		"method": "POST",
 		"path":   nsPath,
@@ -219,7 +224,7 @@ func (ns *Netstorage) Rmdir(nsPath string) (*http.Response, string, error) {
 
 // Mtime changes a file’s mtime
 func (ns *Netstorage) Mtime(nsPath string, mtime int64) (*http.Response, string, error) {
-	return ns._request(map[string]string{
+	return ns._request(map[string]interface{}{
 		"action": fmt.Sprintf("mtime&format=xml&mtime=%d", mtime),
 		"method": "POST",
 		"path":   nsPath,
@@ -228,7 +233,7 @@ func (ns *Netstorage) Mtime(nsPath string, mtime int64) (*http.Response, string,
 
 // Delete deletes an object/symbolic link
 func (ns *Netstorage) Delete(nsPath string) (*http.Response, string, error) {
-	return ns._request(map[string]string{
+	return ns._request(map[string]interface{}{
 		"action": "delete",
 		"method": "POST",
 		"path":   nsPath,
@@ -238,7 +243,7 @@ func (ns *Netstorage) Delete(nsPath string) (*http.Response, string, error) {
 // QuickDelete deletes a directory (i.e., recursively delete a directory tree)
 // In order to use this func, you need to the privilege on the CP Code.
 func (ns *Netstorage) QuickDelete(nsPath string) (*http.Response, string, error) {
-	return ns._request(map[string]string{
+	return ns._request(map[string]interface{}{
 		"action": "quick-delete&quick-delete=imreallyreallysure",
 		"method": "POST",
 		"path":   nsPath,
@@ -247,7 +252,7 @@ func (ns *Netstorage) QuickDelete(nsPath string) (*http.Response, string, error)
 
 // Rename renames a file or symbolic link.
 func (ns *Netstorage) Rename(nsTarget, nsDestination string) (*http.Response, string, error) {
-	return ns._request(map[string]string{
+	return ns._request(map[string]interface{}{
 		"action": "rename&destination=" + url.QueryEscape(nsDestination),
 		"method": "POST",
 		"path":   nsTarget,
@@ -256,7 +261,7 @@ func (ns *Netstorage) Rename(nsTarget, nsDestination string) (*http.Response, st
 
 // Symlink creates a symbolic link.
 func (ns *Netstorage) Symlink(nsTarget, nsDestination string) (*http.Response, string, error) {
-	return ns._request(map[string]string{
+	return ns._request(map[string]interface{}{
 		"action": "symlink&target=" + url.QueryEscape(nsTarget),
 		"method": "POST",
 		"path":   nsDestination,
@@ -284,10 +289,24 @@ func (ns *Netstorage) Upload(localSource, nsDestination string) (*http.Response,
 		return nil, "", fmt.Errorf("[NetstorageError] You should upload a file, not %s", localSource)
 	}
 
-	return ns._request(map[string]string{
+	return ns._request(map[string]interface{}{
 		"action": "upload",
 		"method": "PUT",
 		"source": localSource,
 		"path":   nsDestination,
+	})
+}
+
+// UploadContent uploads an object directly with its content.
+func (ns *Netstorage) UploadContent(reader io.Reader, nsDestination string) (*http.Response, string, error) {
+	if strings.HasSuffix(nsDestination, "/") {
+		return nil, "", fmt.Errorf("[NetstorageError] Destination path should not be a directory")
+	}
+
+	return ns._request(map[string]interface{}{
+		"action":  "upload",
+		"method":  "PUT",
+		"content": reader,
+		"path":    nsDestination,
 	})
 }
